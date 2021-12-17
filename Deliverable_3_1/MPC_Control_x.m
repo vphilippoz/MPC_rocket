@@ -34,29 +34,29 @@ classdef MPC_Control_x < MPC_Control
             % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
             
             
-            %cost 
+            % Cost matrices 
             Q = eye(nx);
             R = eye(nu);
             
-            % setting the terminal cost  as LQR cost
+            % Terminal cost  as LQR cost
             [K, Qf, ~] = dlqr(mpc.A, mpc.B, Q, R);
             K = -K;
             
-            %setting the constraints on the input and states
-            %state constraints
+            % Constraints
+            %   State constraints
             F = [0 1 0 0;...
                  0 -1 0 0];
             f = [deg2rad(5);deg2rad(5)];
             
-            %input contstraints
+            %  Input contstraints
             M = [1; -1];
             m = [deg2rad(15); deg2rad(15)];
             
-            %compute maximal invariant set
+            % Maximal invariant set
             Xf = polytype([F;M*K],[f;m]);
             
-            %computing terminal invariant set
-            Acl = [mpc.A+mcp.B*K];
+            % Terminal set
+            Acl = [mpc.A + mcp.B*K];
             while 1
                 prevXf = Xf;
                 [T,t] = double(Xf);
@@ -68,7 +68,7 @@ classdef MPC_Control_x < MPC_Control
             end
             [Ff,ff] = double(Xf);
 
-            
+            % Constraints and objective
             con = (X(:,2) == mpc.A*X(:,1) + mpc.B*U(:,1)) + (M*U(:,1) <= m);
             obj = U(:,1)'*R*U(:,1);
             for i = 2:N-1
@@ -76,6 +76,7 @@ classdef MPC_Control_x < MPC_Control
                 con = con + (F*X(:,i) <= f) + (M*U(:,i) <= m);
                 obj = obj + X(:,i)'*Q*X(:,i) + U(:,i)'*R*U(:,i);
             end
+            %   Terminal constraints and objective
             con = con + (Ff*X(:,N) <= ff);
             obj = obj + X(:,N)'*Qf*X(:,N);
 
