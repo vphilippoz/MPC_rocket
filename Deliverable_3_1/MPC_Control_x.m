@@ -68,6 +68,28 @@ classdef MPC_Control_x < MPC_Control
             end
             [Ff,ff] = double(Xf);
 
+            % Plot the terminal set
+            figure('Name','Terminal set for Control x');
+            
+            subplot(3,1,1)
+            hold on; 
+            Xf.projection(1:2).plot();
+            xlabel('ωy')
+            ylabel('β')
+
+            subplot(3,1,2)
+            hold on; 
+            Xf.projection(2:3).plot();
+            xlabel('β')
+            ylabel('vx')
+
+            subplot(3,1,3)
+            hold on;
+            Xf.projection(3:4).plot();
+            xlabel('vx')
+            ylabel('x')
+
+
             % Constraints and objective
             con = (X(:,2) == mpc.A*X(:,1) + mpc.B*U(:,1)) + (M*U(:,1) <= m);
             obj = U(:,1)'*R*U(:,1);
