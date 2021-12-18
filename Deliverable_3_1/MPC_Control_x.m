@@ -53,10 +53,10 @@ classdef MPC_Control_x < MPC_Control
             m = [deg2rad(15); deg2rad(15)];
             
             % Maximal invariant set
-            Xf = polytype([F;M*K],[f;m]);
+            Xf = polytope([F;M*K],[f;m]);
             
             % Terminal set
-            Acl = [mpc.A + mcp.B*K];
+            Acl = [mpc.A + mpc.B*K];
             while 1
                 prevXf = Xf;
                 [T,t] = double(Xf);
