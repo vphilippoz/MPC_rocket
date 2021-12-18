@@ -49,7 +49,7 @@ classdef MPC_Control_z < MPC_Control
             
             
             % Cost matrices 
-            Q = eye(nx);
+            Q = 10*eye(nx);
             R = eye(nu);
             
             % Terminal cost  as LQR cost
@@ -60,12 +60,12 @@ classdef MPC_Control_z < MPC_Control
             %   State constraints
             % no state constraints
             
-            %  Input contstraints
-            M = [1; -1];
-            m = [80; -50];
+            %  Input contstraints  80>= Pavg >= 50 x >= 50    -x <=-50
+            M = [-1; 1];
+            m = [-50+56.625; 80-56.625];
             
             % Maximal invariant set
-            Xf = polytope([M*K],[m]);
+            Xf = polytope(M*K,m);
             
             % Terminal set
             Acl = [mpc.A + mpc.B*K];
@@ -79,6 +79,12 @@ classdef MPC_Control_z < MPC_Control
                 end
             end
             [Ff,ff] = double(Xf);
+
+            % Plot the terminal set
+            figure('Name','Terminal set for Control z');
+            Xf.plot();
+            xlabel('vz')
+            ylabel('z')
 
             % Constraints and objective
             con = (X(:,2) == mpc.A*X(:,1) + mpc.B*U(:,1)) + (M*U(:,1) <= m);
