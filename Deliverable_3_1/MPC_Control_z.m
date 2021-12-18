@@ -49,7 +49,7 @@ classdef MPC_Control_z < MPC_Control
             
             
             % Cost matrices 
-            Q = eye(nx);
+            Q = 10*eye(nx);
             R = eye(nu);
             
             % Terminal cost  as LQR cost
@@ -62,10 +62,12 @@ classdef MPC_Control_z < MPC_Control
             
             %  Input contstraints
             M = [1; -1];
-            m = [80; -50];
+            m = [80-56.625; -50+56.625];
             
             % Maximal invariant set
             Xf = polytope([M*K],[m]);
+            
+            
             
             % Terminal set
             Acl = [mpc.A + mpc.B*K];

@@ -37,12 +37,12 @@ Tf = 10; % [s]
 % ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_x, xs, us);
 
 %   y
-[T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, 0);
-ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us);
+% [T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, 0);
+% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us);
 
-% %   z
-% [T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, 0);
-% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_z, xs, us);
+%   z
+[T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, 0);
+ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_z, xs, us);
 
 % %   roll
 % [T, X_sub, U_sub] = rocket.simulate(sys_roll, roll0, Tf, @mpc_roll.get_u, 0);
