@@ -10,6 +10,15 @@ y0 = [0, 0, 0, 5].'; % for system y: ωx , α, vy , y
 z0 = [0, 5].'; % for system z: vz, z
 roll0 = [0.2, deg2rad(2)].'; % for system roll: ωz, γ
 
+% Reference tracking
+y_ref = 4;
+%u_ref = 0;
+x_ref = 3;
+%u_ref = 0;
+z_ref = 3;
+%u_ref = 0;
+roll_ref = deg2rad(30);
+
 % Create rocket
 Ts = 1/20; % Sample time
 rocket = Rocket(Ts);
@@ -24,26 +33,28 @@ mpc_y = MPC_Control_y(sys_y, Ts, H);
 mpc_z = MPC_Control_z(sys_z, Ts, H);
 mpc_roll = MPC_Control_roll(sys_roll, Ts, H);
 % Get control input
-ux = mpc_x.get_u(x0)
-uy = mpc_y.get_u(y0)
-uz = mpc_z.get_u(z0)
-uroll = mpc_roll.get_u(roll0)
+% ux = mpc_x.get_u(x0)
+% uy = mpc_y.get_u(y0)
+% uz = mpc_z.get_u(z0)
+% uroll = mpc_roll.get_u(roll0)
+
+uy = mpc_y.get_u(y0, y_ref)
 
 % Simulate
 Tf = 10; % [s]
 
 % %   x
-% [T, X_sub, U_sub] = rocket.simulate(sys_x, x0, Tf, @mpc_x.get_u, 0);
-% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_x, xs, us);
+% [T, X_sub, U_sub] = rocket.simulate(sys_x, x0, Tf, @mpc_x.get_u, x_ref);
+% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_x, xs, us, x_ref);
 
-%   y
- [T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, 0);
- ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us);
+% %   y
+%  [T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, y_ref);
+%  ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us, y_ref);
 
-% %   z
-% [T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, 0);
-% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_z, xs, us);
+% % z  
+% [T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, z_ref);
+% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_z, xs, us, z_ref);
 
 % %   roll
-% [T, X_sub, U_sub] = rocket.simulate(sys_roll, roll0, Tf, @mpc_roll.get_u, 0);
-% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_roll, xs, us);
+[T, X_sub, U_sub] = rocket.simulate(sys_roll, roll0, Tf, @mpc_roll.get_u, roll_ref);
+ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_roll, xs, us, roll_ref);

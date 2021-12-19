@@ -36,17 +36,7 @@ classdef MPC_Control_y < MPC_Control
             
             % Cost matrices 
             Q = eye(nx);
-            R = eye(nu);
-            
-            % Terminal cost  as LQR cost
-            [K, Qf, ~] = dlqr(mpc.A, mpc.B, Q, R);
-            K = -K
-            
-            %find the steady states inputs
-   
-            target_opti = mpc.setup_steady_state_target()
-         
-            
+            R = eye(nu); 
             
             % Constraints
             %   State constraints
@@ -57,34 +47,15 @@ classdef MPC_Control_y < MPC_Control
             %  Input contstraints
             M = [1; -1];
             m = [deg2rad(15); deg2rad(15)];
-            
-            % Maximal invariant set
-            Xf = polytope([F;M*K],[f;m]);
-            
-            % Terminal set
-            Acl = [mpc.A + mpc.B*K];
-            while 1
-                prevXf = Xf;
-                [T,t] = double(Xf);
-                preXf = polytope(T*Acl,t);
-                Xf = intersect(Xf, preXf);
-                if isequal(prevXf, Xf)
-                    break
-                end
-            end
-            [Ff,ff] = double(Xf);
 
-            % Constraints and objective
-            con = (X(:,2) == mpc.A*X(:,1) + mpc.B*U(:,1)) + (M*U(:,1) <= m);
-            obj = U(:,1)'*R*U(:,1);
+            %Constraints and objective
+            con = ((X(:,2) - x_ref) == mpc.A*(X(:,1)-x_ref) + mpc.B*(U(:,1)-u_ref)) + (M*(U(:,1)-u_ref) <= m);
+            obj = (U(:,1)-u_ref)'*R*(U(:,1)-u_ref);
             for i = 2:N-1
-                con = con + (X(:,i+1) == mpc.A*X(:,i) + mpc.B*U(:,i));
-                con = con + (F*X(:,i) <= f) + (M*U(:,i) <= m);
-                obj = obj + X(:,i)'*Q*X(:,i) + U(:,i)'*R*U(:,i);
+                con = con + ((X(:,i+1)-x_ref) == mpc.A*(X(:,i)-x_ref) + mpc.B*(U(:,i)-u_ref));
+                con = con + (F*(X(:,i)-x_ref) <= f) + (M*(U(:,i)-u_ref) <= m);
+                obj = obj + (X(:,i)-x_ref)'*Q*(X(:,i)-x_ref) + (U(:,i)-u_ref)'*R*(U(:,i)-u_ref);
             end
-            %   Terminal constraints and objective
-            con = con + (Ff*X(:,N) <= ff);
-            obj = obj + X(:,N)'*Qf*X(:,N);
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +63,7 @@ classdef MPC_Control_y < MPC_Control
             % Return YALMIP optimizer object
             ctrl_opti = optimizer(con, obj, sdpsettings('solver','gurobi'), ...
                 {X(:,1), x_ref, u_ref}, U(:,1));
+                   
         end
         
         % Design a YALMIP optimizer object that takes a position reference
