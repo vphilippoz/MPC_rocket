@@ -49,7 +49,7 @@ classdef MPC_Control_z < MPC_Control
             
             
             % Cost matrices 
-            Q = 10*eye(nx);
+            Q = 60*eye(nx);
             R = eye(nu);
             
         
