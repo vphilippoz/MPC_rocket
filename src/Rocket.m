@@ -1186,14 +1186,24 @@ classdef Rocket
         %
         % Trace out an MPC in ref_time seconds
         %
-        function [Ref4D, Ref2D] = MPC_ref(t, ref_time)
+        function Ref4 = MPC_ref(t, ref_time, roll_max, tilt)
             
+            if nargin < 3
+                roll_max = deg2rad(15);
+            end
+                
+            if nargin < 4
+                tilt = true;
+            end
+                
             % Coordinates (x, y, heading)
             coords = [ ...
                 0 0  45; 0 2  45; 1 1  45; 2 2  45; 2 0 -90;          % 'M'
                 3 0 -90; 3 2 -90; 4 2 -90; 4 1 -90; 3 1 -90; 3 0 -90; % 'P'
-                7 0 180; 5 0 90; 5 2 45; 7 2 0];                      % 'C'
+                7 0 0; 5 0 90; 5 2 45; 7 2 0];                        % 'C'
             coords(:,1:2) = coords(:,1:2) / 2;
+            coords(:,3) = coords(:,3) * rad2deg(roll_max)/90;
+            
             nCoords = size(coords, 1);
             
             % Break the path into legs, compute their end times such that
