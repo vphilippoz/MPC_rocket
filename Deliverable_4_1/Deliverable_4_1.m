@@ -38,7 +38,7 @@ mpc_roll = MPC_Control_roll(sys_roll, Ts, H);
 % Merge four sub−system controllers into one full−system controller
 mpc = rocket.merge_lin_controllers(xs, us, mpc_x, mpc_y, mpc_z, mpc_roll);
 % Setup reference funtion
-Tf = 60;
+Tf = 30;
 ref = @(t_, x_) rocket.MPC_ref(t_ , Tf);
 
 [T, X, U, Ref] = rocket.simulate_f(x0, Tf, mpc, ref);
