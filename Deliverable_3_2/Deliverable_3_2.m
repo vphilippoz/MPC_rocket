@@ -3,9 +3,6 @@ addpath(fullfile('..', 'src'));
 %% TODO: This file should produce all the plots for the deliverable
 %% TODO 3.2
 clc; clear; close all;
-addpath(fullfile('src'));
-addpath(fullfile('Deliverable_3_2'));
-
 
 % Initial pose (in SI units)
 x0 = [0, 0, 0, 0].'; % for system x: ωy , β, vx , x
