@@ -43,9 +43,9 @@ uy = mpc_y.get_u(y0, y_ref)
 % Simulate
 Tf = 10; % [s]
 
-% %   x
-% [T, X_sub, U_sub] = rocket.simulate(sys_x, x0, Tf, @mpc_x.get_u, x_ref);
-% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_x, xs, us, x_ref);
+%   x
+[T, X_sub, U_sub] = rocket.simulate(sys_x, x0, Tf, @mpc_x.get_u, x_ref);
+ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_x, xs, us, x_ref);
 
 % %   y
 %  [T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, y_ref);
