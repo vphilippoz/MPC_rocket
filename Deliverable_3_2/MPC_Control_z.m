@@ -52,47 +52,24 @@ classdef MPC_Control_z < MPC_Control
             Q = 10*eye(nx);
             R = eye(nu);
             
-            % Terminal cost  as LQR cost
-            [K, Qf, ~] = dlqr(mpc.A, mpc.B, Q, R);
-            K = -K;
-            
+        
             % Constraints
             %   State constraints
             % no state constraints
             
             %  Input contstraints
             M = [1; -1];
-            m = [80-56.625; -50+56.625];
-            
-            % Maximal invariant set
-            Xf = polytope([M*K],[m]);
+            m = [80-56.625; -50+56.625]; %substract xs
             
             
-            
-            % Terminal set
-            Acl = [mpc.A + mpc.B*K];
-            while 1
-                prevXf = Xf;
-                [T,t] = double(Xf);
-                preXf = polytope(T*Acl,t);
-                Xf = intersect(Xf, preXf);
-                if isequal(prevXf, Xf)
-                    break
-                end
-            end
-            [Ff,ff] = double(Xf);
-
             % Constraints and objective
-            con = (X(:,2) == mpc.A*X(:,1) + mpc.B*U(:,1)) + (M*U(:,1) <= m);
+            con = (X(:,2)-x_ref == mpc.A*(X(:,1)-x_ref) + mpc.B*(U(:,1))-u_ref) + (M*(U(:,1)-u_ref) <= m);
             obj = U(:,1)'*R*U(:,1);
             for i = 2:N-1
-                con = con + (X(:,i+1) == mpc.A*X(:,i) + mpc.B*U(:,i));
-                con = con + (M*U(:,i) <= m);
-                obj = obj + X(:,i)'*Q*X(:,i) + U(:,i)'*R*U(:,i);
+                con = con + ((X(:,i+1)-x_ref) == mpc.A*(X(:,i)-x_ref) + mpc.B*(U(:,i)-u_ref));
+                con = con + (M*(U(:,i)-u_ref) <= m);
+                obj = obj + (X(:,i)-x_ref)'*Q*(X(:,i)-x_ref) + (U(:,i)-u_ref)'*R*(U(:,i)-u_ref);
             end
-            %   Terminal constraints and objective
-            con = con + (Ff*X(:,N) <= ff);
-            obj = obj + X(:,N)'*Qf*X(:,N);
              
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
@@ -131,8 +108,9 @@ classdef MPC_Control_z < MPC_Control
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
-            obj = 0;
-            con = [xs == 0, us == 0];
+            Rs = 1;
+            obj = us'*Rs*us;
+            con = [xs == mpc.A*xs + mpc.B*us, ref == mpc.C*xs];
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

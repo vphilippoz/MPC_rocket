@@ -5,19 +5,19 @@ addpath(fullfile('Deliverable_3_2'));
 
 
 % Initial pose (in SI units)
-x0 = [0, 0, 0, 5].'; % for system x: ωy , β, vx , x
-y0 = [0, 0, 0, 5].'; % for system y: ωx , α, vy , y
-z0 = [0, 5].'; % for system z: vz, z
-roll0 = [0.2, deg2rad(2)].'; % for system roll: ωz, γ
+x0 = [0, 0, 0, 0].'; % for system x: ωy , β, vx , x
+y0 = [0, 0, 0, 0].'; % for system y: ωx , α, vy , y
+z0 = [0, 0].'; % for system z: vz, z
+roll0 = [0, deg2rad(0)].'; % for system roll: ωz, γ
 
 % Reference tracking
-y_ref = 4;
+y_ref = -5;
 %u_ref = 0;
-x_ref = 3;
+x_ref = -5;
 %u_ref = 0;
-z_ref = 3;
+z_ref = -5;
 %u_ref = 0;
-roll_ref = deg2rad(30);
+roll_ref = deg2rad(45);
 
 % Create rocket
 Ts = 1/20; % Sample time
@@ -51,10 +51,10 @@ Tf = 10; % [s]
 %  [T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, y_ref);
 %  ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us, y_ref);
 
-% % z  
-% [T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, z_ref);
-% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_z, xs, us, z_ref);
+% z  
+[T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, z_ref);
+ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_z, xs, us, z_ref);
 
-% %   roll
-[T, X_sub, U_sub] = rocket.simulate(sys_roll, roll0, Tf, @mpc_roll.get_u, roll_ref);
-ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_roll, xs, us, roll_ref);
+% % %   roll
+% [T, X_sub, U_sub] = rocket.simulate(sys_roll, roll0, Tf, @mpc_roll.get_u, roll_ref);
+% ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_roll, xs, us, roll_ref);
