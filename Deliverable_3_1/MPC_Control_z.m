@@ -66,6 +66,12 @@ classdef MPC_Control_z < MPC_Control
             xlabel('vz')
             ylabel('z')
 
+            % Plot the terminal set
+            figure('Name','Terminal set for Control z');
+            Xf.plot();
+            xlabel('vz')
+            ylabel('z')
+
             % Constraints and objective
             con = ((X(:,2)-x_ref) == mpc.A*(X(:,1)-x_ref) + mpc.B*(U(:,1)-u_ref)) + (M*(U(:,1)-u_ref) <= m);
             obj = (U(:,1)-u_ref)'*R*(U(:,1)-u_ref);
