@@ -35,8 +35,8 @@ classdef MPC_Control_roll < MPC_Control
             
             
             % Cost matrices 
-            Q = 20*eye(nx);
-            R = 0.05*eye(nu);
+            Q = 40*eye(nx);
+            R = eye(nu);
     
             % Constraints
             %   State constraints

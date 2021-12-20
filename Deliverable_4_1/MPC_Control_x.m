@@ -35,7 +35,7 @@ classdef MPC_Control_x < MPC_Control
             
             
             % Cost matrices 
-            Q = eye(nx);
+            Q = 30*eye(nx);
             R = eye(nu);
             
             % Constraints

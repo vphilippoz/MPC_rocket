@@ -1,4 +1,5 @@
-addpath(fullfile('..', 'src'));
+addpath(fullfile('.', 'src'));
+% addpath('V:\Vincent\Documents\EPFL\MA1\Model predictive controll\casadi-windows-matlabR2016a-v3.5.5')
 
 %% TODO: This file should produce all the plots for the deliverable
 
@@ -37,13 +38,13 @@ mpc_roll = MPC_Control_roll(sys_roll, Ts, H);
 % Merge four sub−system controllers into one full−system controller
 mpc = rocket.merge_lin_controllers(xs, us, mpc_x, mpc_y, mpc_z, mpc_roll);
 % Setup reference funtion
-Tf = 30;
+Tf = 60;
 ref = @(t_, x_) rocket.MPC_ref(t_ , Tf);
 
 [T, X, U, Ref] = rocket.simulate_f(x0, Tf, mpc, ref);
 
 % Plot pose
-rocket.anim_rate = 1; % Increase this to make the animation faster
+rocket.anim_rate = 5; % Increase this to make the animation faster
 ph = rocket.plotvis(T, X, U, Ref);
 ph.fig.Name = 'Merged lin. MPC in nonlinear simulation'; % Set a figure title
 
