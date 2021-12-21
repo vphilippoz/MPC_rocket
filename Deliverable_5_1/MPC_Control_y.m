@@ -35,7 +35,7 @@ classdef MPC_Control_y < MPC_Control
             
             
             % Cost matrices 
-            Q = 40*eye(nx);
+            Q = 50*eye(nx);
             R = 0.5*eye(nu); 
             
             % Constraints
@@ -90,8 +90,15 @@ classdef MPC_Control_y < MPC_Control
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
             Rs = 1;
+            M = [1; -1];
+            m = [deg2rad(15); deg2rad(15)];
+            F = [0 1 0 0;...
+                 0 -1 0 0];
+            f = [deg2rad(5);deg2rad(5)];
+            
             obj = us'*Rs*us;
-            con = [xs == mpc.A*xs + mpc.B*us, mpc.C*xs == ref];
+            con = [xs == mpc.A*xs + mpc.B*us, mpc.C*xs == ref, M*us<=m, F*xs <= f];
+
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

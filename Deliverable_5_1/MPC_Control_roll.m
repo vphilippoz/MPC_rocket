@@ -87,7 +87,9 @@ classdef MPC_Control_roll < MPC_Control
             % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
             Rs = 1;
             obj = us'*Rs*us;
-            con = [xs == mpc.A*xs + mpc.B*us, mpc.C*xs == ref];
+            M = [1; -1];
+            m = [20; 20];
+            con = [xs == mpc.A*xs + mpc.B*us, mpc.C*xs == ref, M*us <= m];
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

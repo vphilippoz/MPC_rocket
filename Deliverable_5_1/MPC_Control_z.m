@@ -47,10 +47,10 @@ classdef MPC_Control_z < MPC_Control
             
             % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
             
-            
             % Cost matrices 
-            Q = 60*eye(nx);
+            Q = 50*eye(nx);
             R = eye(nu);
+            [~, Qf, ~] = dlqr(mpc.A, mpc.B, Q, R);
             
         
             % Constraints
@@ -59,19 +59,22 @@ classdef MPC_Control_z < MPC_Control
             
             %  Input contstraints
             M = [1; -1];
-            m = [80-56.625; -50+56.625]; %substract xs
+            m = [80 - 50.667; -(50 - 50.667)]; %substract steady state input
             
             
             % Constraints and objective
-            con = (X(:,2)-x_ref == mpc.A*(X(:,1)-x_ref) + mpc.B*(U(:,1))-u_ref) + (M*(U(:,1)-u_ref) <= m);
-            obj = U(:,1)'*R*U(:,1);
+            con = ((X(:,2)-x_ref) == mpc.A*(X(:,1)-x_ref) + mpc.B*(U(:,1)-u_ref));
+            con = con + (M*(U(:,1)-u_ref) <= m - M*u_ref);
+            obj = (U(:,1)-u_ref)'*R*(U(:,1)-u_ref);
             for i = 2:N-1
                 con = con + ((X(:,i+1)-x_ref) == mpc.A*(X(:,i)-x_ref) + mpc.B*(U(:,i)-u_ref));
-                con = con + (M*(U(:,i)-u_ref) <= m);
-                obj = obj + (X(:,i)-x_ref)'*Q*(X(:,i)-x_ref) + (U(:,i)-u_ref)'*R*(U(:,i)-u_ref);
+                con = con + (M*(U(:,i)-u_ref) <= m - M*u_ref);
+                obj = obj + (X(:,i)-x_ref)'*Q*(X(:,i)-x_ref);
+                obj = obj + (U(:,i)-u_ref)'*R*(U(:,i)-u_ref);
             end
-             
-            
+            obj = obj + (X(:,N)-x_ref)'*Qf*(X(:,N)-x_ref);
+
+
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
@@ -108,10 +111,22 @@ classdef MPC_Control_z < MPC_Control
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
-            Rs = 1;
-            obj = us'*Rs*us;
-            con = [xs == mpc.A*xs + mpc.B*us + mpc.B*d_est , ref == mpc.C*xs];
             
+            nx = size(mpc.A);
+            nu = size(mpc.B,2);
+
+            % Input cost
+            Rs = eye(nu);
+
+            % Input constraints
+            M = [1; -1];
+            m = [80-56.667; -50+56.667]; %substract us
+            
+            % Setup objective and constraints
+            mat = [eye(nx)-mpc.A, -mpc.B; mpc.C, 0];
+            obj = us'*Rs*us;
+            con = (mat*[xs; us] == [mpc.B*d_est; ref]) + (M*us <= m);
+
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
@@ -133,15 +148,16 @@ classdef MPC_Control_z < MPC_Control
             % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
             nx = size(mpc.A,1);
             nu = size(mpc.B,2);
+            nd = 1;
             
             A_bar = [mpc.A, mpc.B;
-                     zeros(1,nx), eye(nu)];
+                     zeros(nd,nx), eye(nd,nu)];
             B_bar = [mpc.B; zeros(1,nu)];
             C_bar = [mpc.C, zeros(1,nu)];
-            poles = [0.4, 0.45, 0.35];
+
+            poles = [0.7, 0.8, 0.9]';
             L = -place(A_bar',C_bar', poles)';
-            
-      
+          
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
