@@ -37,7 +37,9 @@ classdef MPC_Control
                 end
                 [ref_x, ref_u] = deal(target{:});
                 if solve_status ~= 0
-                    error('Infeasible in target computation');
+                    solve_status_str = yalmiperror(solve_status);
+                    fprintf([' [Target: ' solve_status_str(1:end-1) '] ']);
+                    u = nan(size(u));
                 end
             else
                 % ... set origin
@@ -58,7 +60,9 @@ classdef MPC_Control
                 [u, solve_status] = mpc.ctrl_opti({x, ref_x, ref_u});
             end
             if solve_status ~= 0
-                error('Infeasible in control computation');
+                solve_status_str = yalmiperror(solve_status);
+                fprintf([' [Control: ' solve_status_str(1:end-1) '] ']);
+                u = nan(size(u));
             end
             
         end
