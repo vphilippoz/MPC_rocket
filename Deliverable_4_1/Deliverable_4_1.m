@@ -1,9 +1,7 @@
-addpath(fullfile('.', 'src'));
+addpath(fullfile('..', 'src'));
 % addpath('V:\Vincent\Documents\EPFL\MA1\Model predictive controll\casadi-windows-matlabR2016a-v3.5.5')
 
-%% TODO: This file should produce all the plots for the deliverable
-
-%% TODO 4.1
+%% TODO 4.1: This file should produce all the plots for the deliverable
 clc; clear; close all;
 
 

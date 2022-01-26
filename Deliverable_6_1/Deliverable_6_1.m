@@ -1,14 +1,11 @@
-close all;
-clear;
-clc;
-addpath(fullfile('../src'));
-addpath('V:\Vincent\Documents\EPFL\MA1\Model predictive controll\casadi-windows-matlabR2016a-v3.5.5')
+addpath(fullfile('..', 'src'));
+close all;clear;clc;
 %% TODO: This file should produce all the plots for the deliverable
 Ts = 1/10;
 rocket = Rocket(Ts);
 
 %Horizon lenth in seconds
-H = 1;
+H = 1.5;
 nmpc = NMPC_Control(rocket, H);
 
 %initial point set as origin
@@ -59,8 +56,7 @@ ref = @(t_, x_) rocket.MPC_ref(t_, Tf, roll_max);
 
 [T, X, U, Ref] = rocket.simulate_f(x0, Tf, mpc, ref);
 %% 
-
-%pelot
-rocket.anim_rate = 0.5; % Increase this to make the animation faster
+%plot
+rocket.anim_rate = 1; % Increase this to make the animation faster
 ph = rocket.plotvis(T, X, U, Ref);
 ph.fig.Name = 'Merged lin. MPC in nonlinear simulation'; % Set a figure title

@@ -1,7 +1,7 @@
 %% TODO: This file should produce all the plots for the deliverable
 clc; clear; close all;
 addpath(fullfile('..','src'));
-addpath('V:\Vincent\Documents\EPFL\MA1\Model predictive controll\casadi-windows-matlabR2016a-v3.5.5')
+%addpath('V:\Vincent\Documents\EPFL\MA1\Model predictive controll\casadi-windows-matlabR2016a-v3.5.5')
 
 % Initial pose (in SI units)
 x0 = [0, 0, 0, 5].'; % for system x: ωy , β, vx , x

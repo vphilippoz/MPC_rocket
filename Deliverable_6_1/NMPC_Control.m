@@ -20,7 +20,7 @@ ref_sym = opti.parameter(4, 1);   % target position
 
 %creating a symbolic function for the rocket dynamics
 f_symbolic = @(X_, U_) rocket.f(X_,U_);
-epsilon = opti.variable(4,N);
+
 
 %cost of the states (cost =x'* Q* x)
 Q = 100*eye(nx);
@@ -71,19 +71,24 @@ m = [deg2rad(15);deg2rad(15);deg2rad(15);deg2rad(15);...
 x_target = [0 0 0 0 0 ref_sym(4) 0 0 0 ref_sym(1) ref_sym(2) ref_sym(3)]';
 
 
-opti.minimize(150*X_sym(1,:)*X_sym(1,:)'+... %wx
-              150*X_sym(2,:)*X_sym(2,:)'+... %wy
-              50*X_sym(3,:)*X_sym(3,:)'+... %wz
-              50*X_sym(4,:)*X_sym(4,:)'+... %alpha
-              50*X_sym(5,:)*X_sym(5,:)'+... %beta
-              50*(X_sym(6,:)-ref_sym(4))*(X_sym(6,:)-ref_sym(4))'+... %gamma
-              150*X_sym(7,:)*X_sym(7,:)'+... %vx
-              150*X_sym(8,:)*X_sym(8,:)'+... %vy
-              120*X_sym(9,:)*X_sym(9,:)'+... %vz
-              200*(X_sym(10,:)-ref_sym(1))*(X_sym(10,:)-ref_sym(1))'+... %x
-              200*(X_sym(11,:)-ref_sym(2))*(X_sym(11,:)-ref_sym(2))'+... %y
-              200*(X_sym(12,:)-ref_sym(3))*(X_sym(12,:)-ref_sym(3))'+... %z
+opti.minimize(250*X_sym(1,2:N-1)*X_sym(1,2:N-1)'+... %wx
+              250*X_sym(2,2:N-1)*X_sym(2,2:N-1)'+... %wy
+              100*X_sym(3,2:N-1)*X_sym(3,2:N-1)'+... %wz
+              50*X_sym(4,2:N-1)*X_sym(4,2:N-1)'+... %alpha
+              50*X_sym(5,2:N-1)*X_sym(5,2:N-1)'+... %beta
+              200*(X_sym(6,2:N-1)-ref_sym(4))*(X_sym(6,2:N-1)-ref_sym(4))'+... %gamma
+              20*X_sym(7,2:N-1)*X_sym(7,2:N-1)'+... %vx
+              20*X_sym(8,2:N-1)*X_sym(8,2:N-1)'+... %vy
+              20*X_sym(9,2:N-1)*X_sym(9,2:N-1)'+... %vz
+              350*(X_sym(10,2:N-1)-ref_sym(1))*(X_sym(10,2:N-1)-ref_sym(1))'+... %x
+              350*(X_sym(11,2:N-1)-ref_sym(2))*(X_sym(11,2:N-1)-ref_sym(2))'+... %y
+              350*(X_sym(12,2:N-1)-ref_sym(3))*(X_sym(12,2:N-1)-ref_sym(3))'+... %z
+              1.5*U_sym(1,:)*U_sym(1,:)'+... 
+              1.5*U_sym(2,:)*U_sym(2,:)'+...
+              1.5*(U_sym(3,:)-us(3))*(U_sym(3,:)-us(3))'+... 
+              1.5*U_sym(4,:)*U_sym(4,:)'+...
               (X_sym(:,N)-x_target)'*Qf*(X_sym(:,N)-x_target));
+              
 
                  
 
@@ -101,11 +106,10 @@ for i = 2:N-1
     opti.subject_to((X_sym(:,i+1)) ==  next_state);
     
     opti.subject_to(M*U_sym(:,i) <= m);
-    opti.subject_to(F*(X_sym(:,i)-x_target) <= f-F*x_target + epsilon(:,i));
-    opti.subject_to(epsilon(:,i) >= zeros(4,1));
+    opti.subject_to(F*(X_sym(:,i)-x_target) <= f-F*x_target);
     
 end
-    opti.subject_to(F*(X_sym(:,N)-x_target) <= f-F*x_target + epsilon(:,i))
+    opti.subject_to(F*(X_sym(:,N)-x_target) <= f-F*x_target);
 
 % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

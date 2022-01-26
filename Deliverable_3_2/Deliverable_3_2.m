@@ -1,7 +1,6 @@
 addpath(fullfile('..', 'src'));
 
-%% TODO: This file should produce all the plots for the deliverable
-%% TODO 3.2
+%% TODO 3.2: This file should produce all the plots for the deliverable
 clc; clear; close all;
 
 % Initial pose (in SI units)
@@ -48,8 +47,8 @@ Tf = 10; % [s]
 ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_x, xs, us, x_ref);
 
 %   y
- [T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, y_ref);
- ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us, y_ref);
+[T, X_sub, U_sub] = rocket.simulate(sys_y, y0, Tf, @mpc_y.get_u, y_ref);
+ph = rocket.plotvis_sub(T, X_sub, U_sub, sys_y, xs, us, y_ref);
 
 % z  
 [T, X_sub, U_sub] = rocket.simulate(sys_z, z0, Tf, @mpc_z.get_u, z_ref);
